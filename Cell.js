@@ -1,55 +1,65 @@
-let WIDTH = 10;
-let HEIGHT = 10;
-
 class Cell {
     #x;
     #y;
-    #wasAlive;
-    #isAlive;
+    #width;
+    #prevState;
+    #state;
     #ctx;
     #env;
 
-    constructor(x, y) {
+    constructor(x, y, width) {
         this.#x = x;
         this.#y = y;
-        this.#wasAlive = false;
-        this.#isAlive = false;
+        this.#width = width;
+        this.#prevState = 0;
+        this.#state = this.#prevState;
         this.#ctx = $('#drawArea')[0].getContext("2d");
         this.#env = [];
     }
 
     draw() {
         this.#ctx.beginPath();
-		this.#ctx.rect(this.#x*WIDTH, this.#y*HEIGHT, WIDTH, HEIGHT);
-		this.#ctx.fillStyle = (this.#isAlive)? "#000000": "rgb(233, 200, 158)";
+		this.#ctx.rect(this.#x*this.#width, this.#y*this.#width, this.#width, this.#width);
+		// this.#ctx.fillStyle = (this.#state == 1)? "#000000": "rgb(233, 200, 158)";
+
+        switch (this.#state) {
+            case 1:
+                this.#ctx.fillStyle = 'black';
+                break;
+                
+                default:
+                this.#ctx.fillStyle = 'rgb(233, 200, 158)';
+                break;
+        }
+
         // ----------------- debug ------------------
-        // if (this.#isAlive == true && this.#wasAlive == false) this.#ctx.fillStyle = 'red';
-        // if (this.#isAlive == true && this.#wasAlive == true) this.#ctx.fillStyle = 'purple';
-        // if (this.#isAlive == false && this.#wasAlive == true) this.#ctx.fillStyle = 'blue';
-        // if (this.#isAlive == false && this.#wasAlive == false) this.#ctx.fillStyle = 'white';
+        // if (this.#state == 1 && this.#prevState == 0) this.#ctx.fillStyle = 'red';
+        // if (this.#state == 1 && this.#prevState == 1) this.#ctx.fillStyle = 'purple';
+        // if (this.#state == 0 && this.#prevState == 1) this.#ctx.fillStyle = 'blue';
+        // if (this.#state == 0 && this.#prevState == 0) this.#ctx.fillStyle = 'rgb(233, 200, 158)';
 		this.#ctx.fill();
 		this.#ctx.closePath();
     }
 
     nextStep() {
-        this.#wasAlive = this.#isAlive;
+        this.#prevState = this.#state;
     }
 
     update() {
         let count = 0;
         for (let i = 0; i < this.#env.length; i++) if (this.#env[i].getState()) count++;
-        if (count == 3 || (this.#isAlive == true && count == 2)) this.#isAlive = true;
-        else this.#isAlive = false;
+        if (count == 3 || (this.#state == 1 && count == 2)) this.#state = 1;
+        else this.#state = 0;
     }
 
     // getter & setter
     getState() {
-        return this.#wasAlive;
+        return this.#prevState;
     }
 
-    setState(isAlive) {
-        this.#wasAlive = isAlive;
-        this.#isAlive = isAlive;
+    setState(state) {
+        this.#prevState = state;
+        this.#state = state;
     }
     
     addEnvCell(cell) {

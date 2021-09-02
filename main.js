@@ -1,6 +1,8 @@
 let nbCellsX;
 let nbCellsY;
 let cells;
+let cellWidth = 5;
+let nbCellStates = 2;
 let animation;
 let step;
 
@@ -15,7 +17,7 @@ function init() {
     for (let i = 0; i < nbCellsX; i++) {
         cells.push([]);
         for (let j = 0; j < nbCellsY; j++) {
-            cells[i].push(new Cell(i, j));
+            cells[i].push(new Cell(i, j, cellWidth));
         }
     }
     // affect env to cells
@@ -70,15 +72,15 @@ function stop() {
     console.log('stop'); // debug
     clearInterval(animation);
 
-    nbCellsX = $('#drawArea').width()/10;
-    nbCellsY = $('#drawArea').height()/10;
+    nbCellsX = $('#drawArea').width()/cellWidth;
+    nbCellsY = $('#drawArea').height()/cellWidth;
     cells = init();
     $('#step')[0].innerText = 'Steps = 0';
 }
 
 function bornCell(i, j) {
     console.log(i, j);
-    cells[i][j].setState(true);
+    cells[i][j].setState(1);
     cells[i][j].draw();
 
     let population = 0;
@@ -93,18 +95,18 @@ $(document).ready(function() { // Page chargée
     $('#pause').hide();
     $('#stop').hide();
 
-    nbCellsX = $('#drawArea').width()/10;
-    nbCellsY = $('#drawArea').height()/10;
+    nbCellsX = $('#drawArea').width()/cellWidth;
+    nbCellsY = $('#drawArea').height()/cellWidth;
     cells = init();
 
     $('#drawArea').on('click', (evt) => {
-        bornCell((evt.offsetX-(evt.offsetX%10))/10, (evt.offsetY-(evt.offsetY%10))/10);
+        bornCell((evt.offsetX-(evt.offsetX%cellWidth))/cellWidth, (evt.offsetY-(evt.offsetY%cellWidth))/cellWidth);
     });
 
     $('#random').on('click', (evt) => {
         for (let i = 0; i < nbCellsX; i++)
             for (let j = 0; j < nbCellsY; j++){
-                cells[i][j].setState((Math.random() >= 0.5)? true : false);
+                cells[i][j].setState((Math.random() >= 1/nbCellStates)? 1 : 0);
                 cells[i][j].draw();
             }        
     });
