@@ -101,6 +101,14 @@ $(document).ready(function() { // Page chargée
         bornCell((evt.offsetX-(evt.offsetX%10))/10, (evt.offsetY-(evt.offsetY%10))/10);
     });
 
+    $('#random').on('click', (evt) => {
+        for (let i = 0; i < nbCellsX; i++)
+            for (let j = 0; j < nbCellsY; j++){
+                cells[i][j].setState((Math.random() >= 0.5)? true : false);
+                cells[i][j].draw();
+            }        
+    });
+
 	$('#play').on('click', (evt) => {
         play();
         $('#play').hide();

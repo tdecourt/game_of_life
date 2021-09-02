@@ -21,7 +21,7 @@ class Cell {
     draw() {
         this.#ctx.beginPath();
 		this.#ctx.rect(this.#x*WIDTH, this.#y*HEIGHT, WIDTH, HEIGHT);
-		this.#ctx.fillStyle = (this.#isAlive)? "#000000": "#FFFFFF";
+		this.#ctx.fillStyle = (this.#isAlive)? "#000000": "rgb(233, 200, 158)";
         // ----------------- debug ------------------
         // if (this.#isAlive == true && this.#wasAlive == false) this.#ctx.fillStyle = 'red';
         // if (this.#isAlive == true && this.#wasAlive == true) this.#ctx.fillStyle = 'purple';
