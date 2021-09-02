@@ -10,6 +10,7 @@ function clear() {
 
 function init() {
     let cells = [];
+    step = 1
     // create cells
     for (let i = 0; i < nbCellsX; i++) {
         cells.push([]);
@@ -33,21 +34,31 @@ function init() {
                 currentCell.addEnvCell(cells[i+1][j]);
                 if (j != nbCellsY-1) currentCell.addEnvCell(cells[i+1][j+1]);
             }
+            currentCell.draw();
         }
     }
+
     return cells;
 }
 
-function start() {
-    console.log('start'); // debug
+function play() {
+    console.log('play'); // debug
     animation = setInterval(() => {
-        console.log(step++); // debug
+        $('#step')[0].innerText = `Steps = ${step++}`;
+
+        clear();
+        let population = 0;
+        for (let i = 0; i < nbCellsX; i++)
+            for (let j = 0; j < nbCellsY; j++) cells[i][j].nextStep();
         for (let i = 0; i < nbCellsX; i++)
             for (let j = 0; j < nbCellsY; j++) {
                 cells[i][j].update();
                 cells[i][j].draw();
+                if (cells[i][j].getState()) population++;
             };
-    }, 1000);
+
+        $('#population')[0].innerText = `Population = ${population}`;
+    }, 100);
 }
 
 function pause() {
@@ -62,12 +73,23 @@ function stop() {
     nbCellsX = $('#drawArea').width()/10;
     nbCellsY = $('#drawArea').height()/10;
     cells = init();
+    $('#step')[0].innerText = 'Steps = 0';
+}
 
-    step = 0;
+function bornCell(i, j) {
+    console.log(i, j);
+    cells[i][j].setState(true);
+    cells[i][j].draw();
+
+    let population = 0;
+    for (let i = 0; i < nbCellsX; i++)
+        for (let j = 0; j < nbCellsY; j++)
+            if (cells[i][j].getState()) population++;
+    $('#population')[0].innerText = `Population : ${population}`;
 }
 
 $(document).ready(function() { // Page chargée
-    $('#start').show();
+    $('#play').show();
     $('#pause').hide();
     $('#stop').hide();
 
@@ -75,23 +97,25 @@ $(document).ready(function() { // Page chargée
     nbCellsY = $('#drawArea').height()/10;
     cells = init();
 
-    step = 0;
+    $('#drawArea').on('click', (evt) => {
+        bornCell((evt.offsetX-(evt.offsetX%10))/10, (evt.offsetY-(evt.offsetY%10))/10);
+    });
 
-	$('#start').on('click', (evt) => {
-        start();
-        $('#start').hide();
+	$('#play').on('click', (evt) => {
+        play();
+        $('#play').hide();
         $('#pause').show();
         $('#stop').show();
     });
 	$('#pause').on('click', (evt) => {
         pause();
-        $('#start').show();
+        $('#play').show();
         $('#pause').hide();
         $('#stop').show();
     });
 	$('#stop').on('click', (evt) => {
         stop();
-        $('#start').show();
+        $('#play').show();
         $('#pause').hide();
         $('#stop').hide();
     });
