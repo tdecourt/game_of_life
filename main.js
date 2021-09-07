@@ -1,7 +1,7 @@
 let nbCellsX;
 let nbCellsY;
 let cells;
-let cellWidth = 5;
+let cellWidth = 4;
 let nbCellStates = 2;
 let animation;
 let step;
@@ -21,20 +21,22 @@ function init() {
         }
     }
     // affect env to cells
+    console.log(cells);
     for (let i = 0; i < nbCellsX; i++) {
         for (let j = 0; j < nbCellsY; j++) {
             const currentCell = cells[i][j];
-            if (i != 0) {
-                if (j != 0) currentCell.addEnvCell(cells[i-1][j-1]);
+            if (i > 0) {
+                if (j > 0) currentCell.addEnvCell(cells[i-1][j-1]);
                 currentCell.addEnvCell(cells[i-1][j]);
-                if (j != nbCellsY-1) currentCell.addEnvCell(cells[i-1][j+1]);
+                if (j < nbCellsY-1) currentCell.addEnvCell(cells[i-1][j+1]);
             }
-            if (j != 0) currentCell.addEnvCell(cells[i][j-1]);
-            if (j != nbCellsY-1) currentCell.addEnvCell(cells[i][j+1]);
-            if (i != nbCellsX-1) {
-                if (j != 0) currentCell.addEnvCell(cells[i+1][j-1]);
+            if (j > 0) currentCell.addEnvCell(cells[i][j-1]);
+            if (j < nbCellsY-1) currentCell.addEnvCell(cells[i][j+1]);
+            if (i < nbCellsX-1) {
+                if (j > 0) currentCell.addEnvCell(cells[i+1][j-1]);
+                console.log(i, j);
                 currentCell.addEnvCell(cells[i+1][j]);
-                if (j != nbCellsY-1) currentCell.addEnvCell(cells[i+1][j+1]);
+                if (j < nbCellsY-1) currentCell.addEnvCell(cells[i+1][j+1]);
             }
             currentCell.draw();
         }
@@ -60,7 +62,7 @@ function play() {
             };
 
         $('#population')[0].innerText = `Population = ${population}`;
-    }, 100);
+    }, 10);
 }
 
 function pause() {
@@ -79,7 +81,7 @@ function stop() {
 }
 
 function bornCell(i, j) {
-    console.log(i, j);
+    // console.log(i, j);
     cells[i][j].setState(1);
     cells[i][j].draw();
 
@@ -95,8 +97,8 @@ $(document).ready(function() { // Page chargée
     $('#pause').hide();
     $('#stop').hide();
 
-    nbCellsX = $('#drawArea').width()/cellWidth;
-    nbCellsY = $('#drawArea').height()/cellWidth;
+    nbCellsX = Math.floor($('#drawArea').width()/cellWidth);
+    nbCellsY = Math.floor($('#drawArea').height()/cellWidth);
     cells = init();
 
     $('#drawArea').on('click', (evt) => {
